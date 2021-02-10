@@ -170,10 +170,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>JS API Starter App</title>
+  <title>Exercise 11</title>
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.11/esri/css/main.css">
-  <script src="https://js.arcgis.com/4.11/"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.18/"></script>
   
   <style>
     html, body, #viewDiv {
@@ -187,8 +187,7 @@
   <script>
     require([
       "esri/views/MapView",
-      "esri/WebMap",
-      "dojo/domReady!"
+      "esri/WebMap"
     ], function(MapView, WebMap) {
 
       var map = new WebMap({
@@ -239,8 +238,7 @@ In our "require" block, we need to tell Dojo to include the widget for "Search" 
     &emsp;&emsp;"esri/WebMap",<br>
 	&emsp;&emsp;"esri/views/MapView",<br>
 	&emsp;&emsp;/*** ADD THESE ***/<br>
-	&emsp;&emsp;"esri/widgets/Search",<br>
-	&emsp;&emsp;"dojo/domReady!"<br>
+	&emsp;&emsp;"esri/widgets/Search"<br>
     ], function(WebMap, MapView, Search) {
 </p>
 <br>
@@ -276,14 +274,14 @@ This time, we're going to add a basemap gallery widget to toggle between differe
 <br>
 But no copy-pasting this time <sup><sup>sorry</sup></sup>. Use the API Reference to figure out what "require" and "function" definition you need as well as how to initialize and add the widget to the UI.
 <br>
-<a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-BasemapGallery.html">BasemapGallery Help</a>
+<a target="_blank" href="https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-BasemapGallery.html">BasemapGallery Help</a>
 <br><br>
 After adding that widget, your map should look like this, with both a functioning search widget and basemap gallery:<br><br>
 <button type="button" class="collapsible">Part 3 Solution</button>
     <div class="content"><img src="https://imgur.com/Z0q4gZe.jpg"></div>
 
 <br><br><br><b><u>Challenges:</u></b><br><br>
-Having the Basemap Gallery open all the time takes up a lot of space, and isn't very user friendly. There is an <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Expand.html">Expand Widget</a> that acts like a clickable button for opening a widget.
+Having the Basemap Gallery open all the time takes up a lot of space, and isn't very user friendly. There is an <a target="_blank" href="https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Expand.html">Expand Widget</a> that acts like a clickable button for opening a widget.
 <br>
 Try putting the Basemap Gallery into the expand widget, and you'll notice that this is way easier on the eyes! Also don't forget to remove your previous "view.ui.add".
 <p style="padding-left: 5%; font-family: monospace;">var basemapExpand = new Expand ({<br>
@@ -291,7 +289,7 @@ Try putting the Basemap Gallery into the expand widget, and you'll notice that t
 	&emsp;&emsp;view: view<br>
 });<br>
 <br>
-view.ui.add(bgExpand, "top-right");
+view.ui.add(basemapExpand, "top-right");
 </p>
 Now it should look like this while collapsed:<br>
 <button type="button" class="collapsible">Challenge Solution</button>
