@@ -222,74 +222,80 @@
 <iframe id=preview></iframe>
 </div>
 <div id=instruct style="font-family: Arial, Helvetica, sans-serif;">
-<span style="display: block; text-align: center;"><b><u>JS API Workshop Prework!</u></b><br><br></span>
+<span style="display: block; text-align: center;"><b><u>Exercise 11 - Search with Widgets</u></b><br><br></span>
 <b><u>Instructions:</u></b><br><br>
-This prework is going to introduce you to HTML, CSS, and JavaScript, the three basic web programming languages. <br><br>
-<b>HTML</b> (or HyperText Markup Language) is the base stucture of any webpage or application. Everything you see on this page is HTML!
-It gives us the structure and frame to eventually load a map into it, but is also a part of anything you see on the web.
+In this lab you will add a search widget and search against a feature layer. The widget performs context-sensitve search as you type and then it will zoom to and highlight the feature selected. You can also format the data in the popup that appears.
 <br><br>
-On the left hand side of this screen you can see the basic <b>"skeleton"</b><sup><sup><i>spooky</i></sup></sup> of an HTML page, with all the elements necessary to start. 
-Any line that includes the <b>"<"</b> and <b>">"</b> brackets is an HTML tag. All HTML tags are nesting.
+In this lab it will search against the neighborhood polygon layer but you can point to any hosted feature layer you want.
 <br><br>
-Looking at the code, you'll notice that we start with an <span style="color:#f92672; font-family: monospace;">"&lt;html&gt;"</span> tag, and everything else is inside that as you can tell from the indentation. This indentation makes it easier for us to see what's nested in what.
-We then close out any of our tags by including a "/" (backslash) with the same text for the tag. So the <span style="color:#f92672; font-family: monospace;">"&lt;html&gt;"</span> tag is closed out on the bottom with <span style="color:#f92672; font-family: monospace;">"&lt;/html&gt;"</span>. Do you notice the other tags being closed out?
-<br><br>
-One tag we want to focus on is the "style" tag. This is where we insert our <b>CSS</b> (or Cascading Style Sheet). 
-This dictates how our entire webpage is stylized, everything from <b><span style="letter-spacing: 2px;">positioning</span></b> to <b><span class="rainbow rainbow_text_animated">fun colors!</span></b>
-In this basic example, we are just making our page and "div" below fill up 100% of the height and width, with no other spacing in the padding or margin of the element.
-<br><br>
-So what is that "div" you may be asking? That's the future home of our map!
-We're now going to load in everything we need to get started with the JavaScript API, and get a basic understanding of how these different pieces of code interact with each other.
+You'll also notice that we're using a WebMap via portal item ID. This makes our lives easier, if any layers have been configured to search against the webmap they will automatically show up in the search widget we create!
 <br><br>
 <b><u>Exercise:</u></b><br><br>
-Go ahead and above these directions click on the "Map" tab. You'll notice that there's nothing there! We need to load in our map with the code on the left!
-<br><br>
-<u>1. Load in our API!</u>
+<u>1. Update Require Statement</u>
 <br>
-The first thing we have to do is actually load in our Esri provided JS API and the CSS to go with it.
+In our "require" block, we need to tell Dojo to include the widget for "Search" and then tell dojo we're ready to load it in. Make sure to include the "Search" in our function scope!
 <br>
-In the <span style="color:#f92672; font-family: monospace;">"&lt;head&gt;"</span> tag, we can add references to any CSS file or JavaScript library.
-For us, we just need two lines of code, go ahead and copy these over below the closing <span style="color:#f92672; font-family: monospace;">"&lt;/style&gt;"</span> tag.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">&lt;link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css"&gt;<br>
-&lt;script src="https://js.arcgis.com/4.18/"&gt;&lt;/script&gt;</p>
-The "link" is our css for our JS API library, and the "script" is our actual API being loaded it!
-<br><br>
-<u>2. Add some JavaScript!</u>
-<br>
-Now we need to get some JavaScript in here, finally! Add this code beneath what we pasted in last time:
-<p style="padding-left: 5%; font-family: monospace;">&lt;script&gt;<br>
-    &emsp;&emsp;require(["esri/Map", "esri/views/MapView"], function (Map, MapView) {<br>
-		&emsp;&emsp;&emsp;&emsp;<br>
-		&emsp;&emsp;});<br>
-    &lt;/script&gt;
+<p style="padding-left: 5%; font-family: monospace;">require([<br>
+    &emsp;&emsp;"esri/WebMap",<br>
+	&emsp;&emsp;"esri/views/MapView",<br>
+	&emsp;&emsp;/*** ADD THESE ***/<br>
+	&emsp;&emsp;"esri/widgets/Search",<br>
+	&emsp;&emsp;"dojo/domReady!"<br>
+    ], function(WebMap, MapView, Search) {
 </p>
-You'll notice that this uses the same "script" tag, but this time we're making our own JavaScript instead of loading in something from the internet!
+<br>
+<u>2. Create Search Widget</u>
+<br>
+Now we're going to put in some code to create the widget and then add it to the "top-right" of our map UI.
+<br>
+<p style="padding-left: 5%; font-family: monospace;">. . .<br>
+	<br>
+    &emsp;&emsp;var view = new MapView({<br>
+		&emsp;&emsp;&emsp;&emsp;container: "viewDiv",<br>
+		&emsp;&emsp;&emsp;&emsp;map: map<br>
+	&emsp;&emsp;});<br>
+	<br>
+	/*** ADD THESE ***/
+
+	//Create search widget
+	&emsp;&emsp;var searchWidget = new Search({<br>
+		&emsp;&emsp;&emsp;&emsp;view: view<br>
+	&emsp;&emsp;});
+	<br>
+	//Add widget to the UI<br>
+	&emsp;&emsp;view.ui.add(searchWidget, "top-right");
+</p>
+Now if you refresh your map, it should look something like this:
 <br><br>
-<u>3. Make our Map!</u>
+<button type="button" class="collapsible">Part 2 Solution</button>
+    <div class="content"><img src="https://imgur.com/DX09Aye.jpg"></div>
+<br><br>
+<u>3. Try on your own!</u>
+<br><br>
+This time, we're going to add a basemap gallery widget to toggle between different AGOL basemaps.
 <br>
-Last step, and then you'll be completely prepared to learn everything in our workshop!
+But no copy-pasting this time <sup><sup>sorry</sup></sup>. Use the API Reference to figure out what "require" and "function" definition you need as well as how to initialize and add the widget to the UI.
 <br>
-Now we're going to paste in between our "{" and "}" brackets in the blank space of our JavaScript. This is inside the scope of our Esri JS API.
-A few lines here, we'll explain them later:
-<p style="padding-left: 5%; font-family: monospace;">var map = new Map({<br>
-    &emsp;&emsp;basemap: "topo" // Basemap layer service<br>
-  });<br>
-<br>
-  var view = new MapView({<br>
-    &emsp;&emsp;map: map,<br>
-    &emsp;&emsp;center: [-118.805, 34.027], // Longitude, latitude<br>
-    &emsp;&emsp;zoom: 13, // Zoom level<br>
-    &emsp;&emsp;container: "viewDiv" // Div element<br>
-  });</p>
-With this we have done everything needed to load in a map! Click on the map tab and you'll see your map!<br><br>
-If it doesn't load, ensure that your code looks like the solution in the picture below:<br><br>
-<button type="button" class="collapsible">Solution</button>
-    <div class="content"><img src="https://imgur.com/1JCGJfd.jpg"></div>
+<a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-BasemapGallery.html">BasemapGallery Help</a>
+<br><br>
+After adding that widget, your map should look like this, with both a functioning search widget and basemap gallery:<br><br>
+<button type="button" class="collapsible">Part 3 Solution</button>
+    <div class="content"><img src="https://imgur.com/Z0q4gZe.jpg"></div>
 
 <br><br><br><b><u>Challenges:</u></b><br><br>
-Can you make your indentation easier to read? Copy and pasting code always messes up indentation... Try to make sure all nested elements are correctly positioned, in the HTML and JavaScript!
-
+Having the Basemap Gallery open all the time takes up a lot of space, and isn't very user friendly. There is an <a href="https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Expand.html">Expand Widget</a> that acts like a clickable button for opening a widget.
+<br>
+Try putting the Basemap Gallery into the expand widget, and you'll notice that this is way easier on the eyes! Also don't forget to remove your previous "view.ui.add".
+<p style="padding-left: 5%; font-family: monospace;">var basemapExpand = new Expand ({<br>
+	&emsp;&emsp;content: //VARIABLE FOR YOUR BASEMAP GALLERY HERE,<br>
+	&emsp;&emsp;view: view<br>
+});<br>
+<br>
+view.ui.add(bgExpand, "top-right");
+</p>
+Now it should look like this while collapsed:<br>
+<button type="button" class="collapsible">Challenge Solution</button>
+    <div class="content"><img src="https://imgur.com/OuO9XPV.jpg"></div>
 </div>
 </div>
 <div id="dialog" title="Welcome to the ArcGIS API for JavaScript">
@@ -309,11 +315,11 @@ Can you make your indentation easier to read? Copy and pasting code always messe
         //clearTimeout(delay);
         //delay = setTimeout(updatePreview, 300);
       });
-	  //document.getElementById('instruct').style.display = "none";
+	  document.getElementById('instruct').style.display = "none";
 	  
-	  $( function() {
+	  /* $( function() {
 		$( "#dialog" ).dialog({width: "500px", modal: true});
-	  } );
+	  } ); */
       
       function updatePreview() {
 	    var wrapper = document.getElementById('wrapper');
@@ -332,7 +338,7 @@ Can you make your indentation easier to read? Copy and pasting code always messe
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 
-		link.setAttribute('download', 'exercise1.html');
+		link.setAttribute('download', 'exercise11.html');
 		link.setAttribute('href', 'data:' + 'text/html' + ';charset=utf-8,' + encodeURIComponent(elHtml));
 		link.click(); 
 	  }
