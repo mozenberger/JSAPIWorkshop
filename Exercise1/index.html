@@ -257,9 +257,9 @@ The "link" is our css for our JS API library, and the "script" is our actual API
 <br>
 Now we need to get some JavaScript in here, finally! Add this code beneath what we pasted in last time:
 <p style="padding-left: 5%; font-family: monospace;">&lt;script&gt;<br>
-    require(["esri/Map", "esri/views/MapView"], function (Map, MapView) {<br>
-<br>
-    });<br>
+    &emsp;&emsp;require(["esri/Map", "esri/views/MapView"], function (Map, MapView) {<br>
+		&emsp;&emsp;&emsp;&emsp;<br>
+		&emsp;&emsp;});<br>
     &lt;/script&gt;
 </p>
 You'll notice that this uses the same "script" tag, but this time we're making our own JavaScript instead of loading in something from the internet!
@@ -271,14 +271,14 @@ Last step, and then you'll be completely prepared to learn everything in our wor
 Now we're going to paste in between our "{" and "}" brackets in the blank space of our JavaScript. This is inside the scope of our Esri JS API.
 A few lines here, we'll explain them later:
 <p style="padding-left: 5%; font-family: monospace;">var map = new Map({<br>
-    basemap: "topo" // Basemap layer service<br>
+    &emsp;&emsp;basemap: "topo" // Basemap layer service<br>
   });<br>
 <br>
   var view = new MapView({<br>
-    map: map,<br>
-    center: [-118.805, 34.027], // Longitude, latitude<br>
-    zoom: 13, // Zoom level<br>
-    container: "viewDiv" // Div element<br>
+    &emsp;&emsp;map: map,<br>
+    &emsp;&emsp;center: [-118.805, 34.027], // Longitude, latitude<br>
+    &emsp;&emsp;zoom: 13, // Zoom level<br>
+    &emsp;&emsp;container: "viewDiv" // Div element<br>
   });</p>
 With this we have done everything needed to load in a map! Click on the map tab and you'll see your map!<br><br>
 If it doesn't load, ensure that your code looks like the picture in the solution below:<br><br>
@@ -286,7 +286,7 @@ If it doesn't load, ensure that your code looks like the picture in the solution
     <div class="content"><img src="https://imgur.com/1JCGJfd.jpg"></div>
 
 <br><br><br><b><u>Challenges:</u></b><br><br>
-Can you make your indentation easier to read? Try to make sure all nested elements are correctly positioned, in the HTML and JavaScript!
+Can you make your indentation easier to read? Copy and pasting code always messes up indentation... Try to make sure all nested elements are correctly positioned, in the HTML and JavaScript!
 
 </div>
 </div>
