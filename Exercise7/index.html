@@ -289,7 +289,7 @@ Navigating in 3D is different than in 2D, as you've probably seen. Make sure tha
       setTimeout(updatePreview, 300);
 	  
 	  function download() {
-		var elHtml = document.getElementById('code').textContent;
+		var elHtml = editor.getValue();
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 

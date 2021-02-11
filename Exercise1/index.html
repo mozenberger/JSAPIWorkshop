@@ -330,7 +330,7 @@ Can you make your indentation easier to read? Copy and pasting code always messe
       setTimeout(updatePreview, 300);
 	  
 	  function download() {
-		var elHtml = document.getElementById('code').textContent;
+		var elHtml = editor.getValue();
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 

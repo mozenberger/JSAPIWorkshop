@@ -332,7 +332,7 @@ Now it should look like this while collapsed:<br>
       setTimeout(updatePreview, 300);
 	  
 	  function download() {
-		var elHtml = document.getElementById('code').textContent;
+		var elHtml = editor.getValue();
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 

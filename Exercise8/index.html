@@ -309,7 +309,7 @@ Add your own SceneLayer! Use whatever portal you are comfortable with, and find 
       setTimeout(updatePreview, 300);
 	  
 	  function download() {
-		var elHtml = document.getElementById('code').textContent;
+		var elHtml = editor.getValue();
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 
