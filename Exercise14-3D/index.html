@@ -1,6 +1,6 @@
 <!doctype html>
 
-<title>Exercise 14</title>
+<title>Exercise 14 3D</title>
 <meta charset="utf-8"/>
 <link rel="icon" type="image/png" href="./brackets.png"/>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.css>
@@ -164,13 +164,13 @@
 
 
 <textarea id="code" name="code" style="display:none;">
-<!-- Exercise 14, Written in JavaScript 4.18 -->
+<!-- Exercise 14 3D, Written in JavaScript 4.18 -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>Exercise 14</title>
+  <title>Exercise 14 3D</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/css/main.css">
   <script src="https://js.arcgis.com/4.18/"></script>
@@ -186,16 +186,17 @@
 
   <script>
     require([
-      "esri/views/MapView",
+      "esri/views/SceneView",
       "esri/Map"
-    ], function(MapView, Map) {
+    ], function(SceneView, Map) {
 
-      var map = new Map({
-        basemap: "hybrid"
+      var scene = new Map({
+        basemap: "hybrid",
+		ground: "world-elevation"
       });
 
-      var view = new MapView({
-        map: map,
+      var view = new SceneView({
+        map: scene,
         container: "viewDiv",
 		center: [7.59564, 46.06595],
   	  	zoom: 12
@@ -221,7 +222,7 @@
 <iframe id=preview></iframe>
 </div>
 <div id=instruct style="font-family: Arial, Helvetica, sans-serif;">
-<span style="display: block; text-align: center;"><b><u>Exercise 14 - Calling a Geoprocessing Service</u></b><br><br></span>
+<span style="display: block; text-align: center;"><b><u>Exercise 14 3D - Calling a Geoprocessing Service</u></b><br><br></span>
 <b><u>Instructions:</u></b><br><br>
 As cool as JavaScript is, it certainly has limits. There are lots of complex tasks that we may need that are likely already in a geoprocessing tool. 
 So let's use the JS API to call a geoprocessing service and offload all that crazy work to a server!
@@ -234,7 +235,7 @@ In this lab, we'll calculate a complex viewshed by reaching out to that geoproce
 Update your require statement <b>and</b> function definition to include the following:
 <br>
 <p style="padding-left: 5%; font-family: monospace;">require([<br>
-    &emsp;&emsp;"esri/views/MapView",<br>
+    &emsp;&emsp;"esri/views/SceneView",<br>
 	&emsp;&emsp;"esri/Map",<br>
     &emsp;&emsp;"esri/layers/GraphicsLayer",<br>
     &emsp;&emsp;"esri/Graphic",<br>
@@ -242,7 +243,7 @@ Update your require statement <b>and</b> function definition to include the foll
     &emsp;&emsp;"esri/tasks/Geoprocessor",<br>
     &emsp;&emsp;"esri/tasks/support/LinearUnit",<br>
     &emsp;&emsp;"esri/tasks/support/FeatureSet",<br>
-  ], function(MapView, Map, GraphicsLayer, Graphic, Point, Geoprocessor, LinearUnit, FeatureSet) { 
+  ], function(SceneView, Map, GraphicsLayer, Graphic, Point, Geoprocessor, LinearUnit, FeatureSet) { 
 </p>
 <br>
 <u>2. Add Graphics Layer</u>
@@ -251,7 +252,7 @@ We will create a graphic point on the location that we click on, so let's add a 
 <br>
 <p style="padding-left: 5%; font-family: monospace;">var graphicsLayer = new GraphicsLayer();<br>
 	<br>
-	map.add(graphicsLayer);
+	scene.add(graphicsLayer);
 </p>
 <br>
 <u>3. Symbols</u>
@@ -358,6 +359,7 @@ Now go ahead and click on the map! Give it a few seconds and it'll create a view
     <div class="content"><img src="./images/e14_one.jpg"></div>
 
 <br><br><br><b><u>Challenges:</u></b><br><br>
+Really zoom into the point that you clicked to start your viewshed. In 3D, you should be able to really understand why it calculated the way it did!<br>
 Can you think of any other geoprocessing tools that you could use in a JS API?
 </div>
 </div>
@@ -401,7 +403,7 @@ Can you think of any other geoprocessing tools that you could use in a JS API?
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 
-		link.setAttribute('download', 'exercise14.html');
+		link.setAttribute('download', 'exercise14-3D.html');
 		link.setAttribute('href', 'data:' + 'text/html' + ';charset=utf-8,' + encodeURIComponent(elHtml));
 		link.click(); 
 	  }
