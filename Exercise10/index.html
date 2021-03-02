@@ -198,144 +198,144 @@
     require([
         "esri/Map",
         "esri/views/SceneView",
-      ], function(Map, SceneView) {
+    ], function(Map, SceneView) {
 
-        var map = new Map({
-          basemap: "topo-vector",
-          ground: "world-elevation"
-        });
-        
-        var view = new SceneView({
-          container: "viewDiv",
-          map: map,
-          center: [-117.195658, 34.056677],
-          scale: 5000
-        });
-
-		var blue = [82, 82, 122, 0.9];
-        var white = [255, 255, 255, 0.8];
-
-        // polygon symbol used for sketching the extruded building footprints
-        var extrudedPolygon = {
-          type: "polygon-3d",
-          symbolLayers: [
-            {
-              type: "extrude",
-              size: 10, // extrude by 10 meters
-              material: {
-                color: white
-              },
-              edges: {
-                type: "solid",
-                size: "3px",
-                color: blue
-              }
-            }
-          ]
-        };
-
-        // polyline symbol used for sketching routes
-        var route = {
-          type: "line-3d",
-          symbolLayers: [
-            {
-              type: "line",
-              size: "10px",
-              material: {
-                color: white
-              }
-            },
-            {
-              type: "line",
-              size: "3px",
-              material: {
-                color: blue
-              }
-            }
-          ]
-        };
-
-        // point symbol used for sketching points of interest
-        var point = {
-          type: "point-3d",
-          symbolLayers: [
-            {
-              type: "icon",
-              size: "20px",
-              resource: { primitive: "kite" },
-              outline: {
-                color: blue,
-                size: "3px"
-              },
-              material: {
-                color: white
-              }
-            }
-          ]
-        };
-
-
-
-		/****************************************
-		 * 
-		 * This is all the code that makes the UI work!
-		 *
-		 *  **************************************/
-		sketchViewModel.on("create", function (event) {
-          if (event.state === "complete") {
-            document.getElementById("startbuttons").style.display = "inline";
-            document.getElementById("actionbuttons").style.display = "none";
-          }
-          if (event.state === "cancel") {
-            document.getElementById("startbuttons").style.display = "inline";
-            document.getElementById("actionbuttons").style.display = "none";
-          }
-        });
-
-        // graphic backup to revert a canceled update process
-        let updatebackupgraphic;
-
-        sketchViewModel.on("update", function (event) {
-          console.log(event);
-          if (event.state === "start") {
-            updatebackupgraphic = event.graphics[0].clone();
-            document.getElementById("startbuttons").style.display = "none";
-            document.getElementById("actionbuttons").style.display = "inline";
-          }
-          if (event.state === "complete") {
-            if (event.aborted) {
-              // revert to the graphic before starting the update process
-              graphicsLayer.remove(event.graphics[0]);
-              graphicsLayer.add(updatebackupgraphic);
-            }
-            document.getElementById("startbuttons").style.display = "inline";
-            document.getElementById("actionbuttons").style.display = "none";
-          }
-        });
-
-        const drawButtons = Array.prototype.slice.call(document.getElementsByClassName("starttool"));
-
-        // set event listeners to activate sketching graphics
-        drawButtons.forEach(function (btn) {
-          btn.addEventListener("click", function (event) {
-            // to activate sketching the create method is called passing in the geometry type
-            // from the data-type attribute of the html element
-            sketchViewModel.create(event.target.getAttribute("data-type"));
-            document.getElementById("startbuttons").style.display = "none";
-            document.getElementById("actionbuttons").style.display = "inline";
-          });
-        });
-
-        document.getElementById("cancel").addEventListener("click", function (event) {
-          sketchViewModel.cancel();
-        });
-        document.getElementById("done").addEventListener("click", function (event) {
-          sketchViewModel.complete();
-        });
-
-        view.ui.add("sketchPanel", "top-right");
-
+      var map = new Map({
+        basemap: "topo-vector",
+        ground: "world-elevation"
       });
+        
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        center: [-117.195658, 34.056677],
+        scale: 5000
+      });
+
+	    var blue = [82, 82, 122, 0.9];
+      var white = [255, 255, 255, 0.8];
+
+      // polygon symbol used for sketching the extruded building footprints
+      var extrudedPolygon = {
+        type: "polygon-3d",
+        symbolLayers: [
+          {
+            type: "extrude",
+            size: 10, // extrude by 10 meters
+            material: {
+              color: white
+            },
+            edges: {
+              type: "solid",
+              size: "3px",
+              color: blue
+            }
+          }
+        ]
+      };
+
+      // polyline symbol used for sketching routes
+      var route = {
+        type: "line-3d",
+        symbolLayers: [
+          {
+            type: "line",
+            size: "10px",
+            material: {
+              color: white
+            }
+          },
+          {
+            type: "line",
+            size: "3px",
+            material: {
+              color: blue
+            }
+          }
+        ]
+      };
+
+      // point symbol used for sketching points of interest
+      var point = {
+        type: "point-3d",
+        symbolLayers: [
+          {
+            type: "icon",
+            size: "20px",
+            resource: { primitive: "kite" },
+            outline: {
+              color: blue,
+              size: "3px"
+            },
+            material: {
+              color: white
+            }
+          }
+        ]
+      };
+
+
+
+      /****************************************
+       * 
+       * This is all the code that makes the UI work!
+       *
+       *  **************************************/
+      sketchViewModel.on("create", function (event) {
+        if (event.state === "complete") {
+          document.getElementById("startbuttons").style.display = "inline";
+          document.getElementById("actionbuttons").style.display = "none";
+        }
+        if (event.state === "cancel") {
+          document.getElementById("startbuttons").style.display = "inline";
+          document.getElementById("actionbuttons").style.display = "none";
+        }
+      });
+
+      // graphic backup to revert a canceled update process
+      let updatebackupgraphic;
+
+      sketchViewModel.on("update", function (event) {
+        console.log(event);
+        if (event.state === "start") {
+          updatebackupgraphic = event.graphics[0].clone();
+          document.getElementById("startbuttons").style.display = "none";
+          document.getElementById("actionbuttons").style.display = "inline";
+        }
+        if (event.state === "complete") {
+          if (event.aborted) {
+            // revert to the graphic before starting the update process
+            graphicsLayer.remove(event.graphics[0]);
+            graphicsLayer.add(updatebackupgraphic);
+          }
+          document.getElementById("startbuttons").style.display = "inline";
+          document.getElementById("actionbuttons").style.display = "none";
+        }
+      });
+
+      const drawButtons = Array.prototype.slice.call(document.getElementsByClassName("starttool"));
+
+      // set event listeners to activate sketching graphics
+      drawButtons.forEach(function (btn) {
+        btn.addEventListener("click", function (event) {
+          // to activate sketching the create method is called passing in the geometry type
+          // from the data-type attribute of the html element
+          sketchViewModel.create(event.target.getAttribute("data-type"));
+          document.getElementById("startbuttons").style.display = "none";
+          document.getElementById("actionbuttons").style.display = "inline";
+        });
+      });
+
+      document.getElementById("cancel").addEventListener("click", function (event) {
+        sketchViewModel.cancel();
+      });
+      document.getElementById("done").addEventListener("click", function (event) {
+        sketchViewModel.complete();
+      });
+
+      view.ui.add("sketchPanel", "top-right");
+
+    });
   </script>
 </head>
 <body>
@@ -414,8 +414,10 @@ In the code window I've already included some variables for our points, lines, a
 </p>
 And now our sketching should work! Create some buildings of your own on Esri Campus!
 <br><br>
-<button type="button" class="collapsible">Solution</button>
-    <div class="content"><img src="https://imgur.com/7SHCG34.jpg"></div>
+<button type="button" class="collapsible">Map Solution</button>
+    <div class="content"><img src="./images/e10_one.png"></div>
+<br><br><button type="button" class="collapsible">Code Solution</button>
+    <div class="content"><img src="./images/e10_code_1.jpg"><img src="./images/e10_code_2.jpg"><img src="./images/e10_code_3.jpg"><img src="./images/e10_code_4.jpg"></div>
 <br><br><br><b><u>Challenges:</u></b><br><br>
 There was a lot of code in this one. Can you read through the functions and SketchViewModel events and understand what is happening? Comprehension of code is important in learning JavaScript!
 <br><br>

@@ -219,7 +219,8 @@
 <div id=wrapper>
 <iframe id=preview></iframe>
 </div>
-<div id=instruct>
+<div id=instruct style="font-family: Arial, Helvetica, sans-serif;">
+<span style="display: block; text-align: center;"><b><u>Exercise 15 3D - Query and Calculate Statistics</u></b><br><br></span>
 <b><u>Exercise:</u></b><br><br>
 In this lab you will use a query with distance and then clone that query to do stats on the features selected.<br><br>
 1. First we'll add some css for how we want our statistics values to be display with color and font size and weight:
@@ -462,9 +463,9 @@ If you're stuck, ensure that your code looks like the solution in the picture be
 <br><br>
 </div>
 </div>
-<div id="dialog" title="Welcome to the ArcGIS API for JavaScript">
+<!-- <div id="dialog" title="Welcome to the ArcGIS API for JavaScript">
   <p>Please use this Code Playground to begin learning about the ArcGIS API for JavaScript. To get started, click on the Directions button. As you edit code on the left side of the screen, press the Refresh button to see the updates on the Map.</p>
-<br><br></div>
+<br><br></div> -->
     <script>
       var delay;
       // Initialize CodeMirror editor with a nice html5 canvas demo.
@@ -481,9 +482,9 @@ If you're stuck, ensure that your code looks like the solution in the picture be
       });
 	  document.getElementById('instruct').style.display = "none";
 	  
-	  $( function() {
+	  /* $( function() {
 		$( "#dialog" ).dialog({width: "500px"});
-	  } );
+	  } ); */
       
       function updatePreview() {
 	    var wrapper = document.getElementById('wrapper');

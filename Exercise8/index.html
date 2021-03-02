@@ -188,21 +188,21 @@
     require([
         "esri/Map",
         "esri/views/SceneView",
-      ], function(Map, SceneView) {
+    ], function(Map, SceneView) {
 
-        var map = new Map({
-          basemap: "dark-gray-vector",
-          ground: "world-elevation"
-        });
-        
-        var view = new SceneView({
-          container: "viewDiv",
-          map: map,
-          center: [-77.029, 38.89],
-          scale: 500000
-        });
-
+      var map = new Map({
+        basemap: "dark-gray-vector",
+        ground: "world-elevation"
       });
+        
+	  var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        center: [-77.029, 38.89],
+        scale: 500000
+      });
+
+    });
   </script>
 </head>
 <body>
@@ -251,8 +251,8 @@ map.add(buildingsSL);
 </p>
 Nice! You should be able to zoom in and check out the buildings now. Should look like this:
 <br><br>
-<button type="button" class="collapsible">Solution</button>
-    <div class="content"><img src="https://imgur.com/3EdZifT.jpg"></div>
+<button type="button" class="collapsible">Map Solution</button>
+    <div class="content"><img src="./images/e8_one.png"></div>
 <br><br>
 <u>3. Adjust Camera</u>
 <br>
@@ -268,6 +268,9 @@ In these scenes, it might be beneficial to adjust your camera in the code to hav
 });
 </p>
 Now your camera should be perfectly positioned over the Smithsonian Museum of Natural History!
+<br><br>
+<button type="button" class="collapsible">Code Solution</button>
+    <div class="content"><img src="./images/e8_code.jpg"></div>
 <br><br><br><b><u>Challenges:</u></b><br><br>
 Add your own SceneLayer! Use whatever portal you are comfortable with, and find a scene layer published up on there. Keep in mind it must be shared publically, otherwise it'll ask you to log into the portal.
 <br><br>

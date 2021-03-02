@@ -188,21 +188,21 @@
     require([
         "esri/Map",
         "esri/views/SceneView",
-      ], function(Map, SceneView) {
+    ], function(Map, SceneView) {
 
-        var map = new Map({
-          basemap: "topo-vector",
-          ground: "world-elevation"
-        });
-        
-        var view = new SceneView({
-          container: "viewDiv",
-          map: map,
-          center: [-117.195658, 34.056677],
-          scale: 5000
-        });
-
+      var map = new Map({
+        basemap: "topo-vector",
+        ground: "world-elevation"
       });
+        
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        center: [-117.195658, 34.056677],
+        scale: 5000
+      });
+
+    });
   </script>
 </head>
 <body>
@@ -251,9 +251,10 @@ Note the scene ID at the end of that URL. Take the code block below, paste this 
 This one is easy. In the previous step we created a variable called "scene". Simply replace the "map" variable in our view with this new scene variable!
 <br><br>
 We can also now delete the "center" and "scale" items in our view as this is defined in our Web Scene.
-<button type="button" class="collapsible">Solution</button>
-    <div class="content"><img src="https://imgur.com/S5QhCNo.jpg"></div>
-
+<br><br><button type="button" class="collapsible">Map Solution</button>
+    <div class="content"><img src="./images/e9_one.png"></div>
+<br><br><button type="button" class="collapsible">Code Solution</button>
+    <div class="content"><img src="./images/e9_code.jpg"></div>
 <br><br><br><b><u>Challenges:</u></b><br><br>
 Find your own Web Scene and load it in! Use that same method to find the ID of your scene.
 <br><br>
