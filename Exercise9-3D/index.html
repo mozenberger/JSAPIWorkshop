@@ -1,6 +1,6 @@
 <!doctype html>
 
-<title>Exercise 13</title>
+<title>Exercise 9 3D</title>
 <meta charset="utf-8"/>
 <link rel="icon" type="image/png" href="./brackets.png"/>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.css>
@@ -164,13 +164,13 @@
 
 
 <textarea id="code" name="code" style="display:none;">
-<!-- Exercise 13, Written in JavaScript 4.18 -->
+<!-- Exercise 9 3D, Written in JavaScript 4.18 -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>Exercise 13</title>
+  <title>Exercise 9 3D</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/css/main.css">
   <script src="https://js.arcgis.com/4.18/"></script>
@@ -186,19 +186,17 @@
 
   <script>
     require([
-      "esri/views/MapView",
+      "esri/views/SceneView",
       "esri/Map"
-    ], function(MapView, Map) {
+    ], function(SceneView, Map) {
 
-      var map = new Map({
-        basemap: "dark-gray-vector"
-      });
+      var scene = new Map({
+		  basemap: "dark-gray-vector"
+	  });
 
-      var view = new MapView({
-        map: map,
-        container: "viewDiv",
-		center: [-77.029, 38.89],
-		zoom: 10
+      var view = new SceneView({
+        map: scene,
+        container: "viewDiv"
       });
 
     });
@@ -221,93 +219,173 @@
 <iframe id=preview></iframe>
 </div>
 <div id=instruct style="font-family: Arial, Helvetica, sans-serif;">
-<span style="display: block; text-align: center;"><b><u>Exercise 13 - Client-side Buffering</u></b><br><br></span>
+<span style="display: block; text-align: center;"><b><u>Exercise 9 3D - Search with Widgets</u></b><br><br></span>
 <b><u>Instructions:</u></b><br><br>
-You may have heard the term "client-side" before, but what does that actually mean?
+In this lab you will use a QueryTask to query data from a feature layer.
+A query task allows you to make a SQL or spatial query to retrieve subsets of records from a layer or service
 <br><br>
-The "client" in this case is your web browser! So instead of going back to our feature service, or any servers,
- we are going to generate a buffer locally on your computer using your web browser.
+With Query tasks, you are responsible for adding the resulting features to the map as graphics.
+You are also responsible for adding a symbol and defining the popup template used for the data.
 <br><br>
-To do this, we're going to use the GeometryEngine class and buffer by a predefined amount.
+Let's look at some Washington D.C. Metro Station data and use this query to select and symbolize the different lines!
 <br><br>
 <b><u>Exercise:</u></b><br><br>
-<u>1. Update Require</u>
+<u>1. Create HTML Select Box</u>
+<br>
+First thing we need is a "select" element in our HTML with different options for each metro line.
+<br>
+The text that we put in here will eventually be passed back into the query, since the user has to select the line they want to view.
+<br>
+<p style="padding-left: 5%; font-family: monospace;">
+	&emsp;&emsp;&lt;div id="viewDiv"&gt;&lt;/div&gt;<br>
+	&emsp;&emsp;&lt;!-- ADD --&gt;<br>
+	&emsp;&emsp;&lt;select id="queryDiv"&gt;<br>
+	&emsp;&emsp;&emsp;&emsp;&lt;option selected&gt;blue&lt;/option&gt;<br>
+	&emsp;&emsp;&emsp;&emsp;&lt;option&gt;orange&lt;/option&gt;<br>
+	&emsp;&emsp;&emsp;&emsp;&lt;option&gt;red&lt;/option&gt;<br>
+	&emsp;&emsp;&emsp;&emsp;&lt;option&gt;silver&lt;/option&gt;<br>
+	&emsp;&emsp;&emsp;&emsp;&lt;option&gt;yellow&lt;/option&gt;<br>
+	&emsp;&emsp;&lt;/select&gt;
+</p>
+<br>
+<u>2. Update Require</u>
 <br>
 Update your require statement <b>and</b> function definition to include the following:
 <br>
 <p style="padding-left: 5%; font-family: monospace;">require([<br>
-	&emsp;&emsp;"esri/views/MapView",<br>
+	&emsp;&emsp;"esri/views/SceneView",<br>
 	&emsp;&emsp;"esri/Map",<br>
 	&emsp;&emsp;/*** ADD ***/<br>
-	&emsp;&emsp;"esri/layers/GraphicsLayer",<br>
-	&emsp;&emsp;"esri/Graphic",<br>
-	&emsp;&emsp;"esri/geometry/geometryEngine"<br>
-], function(MapView, Map, GraphicsLayer, Graphic, geometryEngine) {
+	&emsp;&emsp;"esri/layers/FeatureLayer",<br>
+	&emsp;&emsp;"esri/tasks/QueryTask",<br>
+	&emsp;&emsp;"esri/tasks/support/Query",<br>
+	&emsp;&emsp;"esri/symbols/SimpleMarkerSymbol"<br>
+], function(SceneView, Map, FeatureLayer, QueryTask, Query, SimpleMarkerSymbol) {
 </p>
 <br>
-<u>2. Add Graphics Layer</u>
+<u>3. Add Query</u>
 <br>
-Before we can work with the graphics layer, we need to add it to our map!
+Now we're going to create a QueryTask and Query to select features from the metro stops feature layer.
+We're also going to simply return two fields from the layer, since that's all we need.
 <br>
-<p style="padding-left: 5%; font-family: monospace;">var bufferLayer = new GraphicsLayer();<br>
+<p style="padding-left: 5%; font-family: monospace;">var view = new SceneView({<br>
+	&emsp;&emsp;container: "viewDiv",<br>
+	&emsp;&emsp;map: scene,<br>
+	&emsp;&emsp;center: [-77.029, 38.89],<br>
+	&emsp;&emsp;zoom: 10<br>
+	});<br>
 	<br>
-	map.add(bufferLayer);
+	//Create query task to reference the PDX_Rail_Stops_Styled feature layer <br>
+	var queryTask = new QueryTask({<br>
+	&emsp;&emsp;url: "https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/Metro_Stations_Regional/FeatureServer/0"<br>
+	});<br>
+	<br>
+	//Only return two fields<br>
+	var query = new Query({<br>
+	&emsp;&emsp;returnGeometry: true,<br>
+	&emsp;&emsp;outFields: ["NAME", "LINE"],<br>
+	&emsp;&emsp;where: ""<br>
+    });<br>
 </p>
 <br>
-<u>3. Symbols</u>
+<u>4. Lots o' Functions</u>
 <br>
-We need a symbol for the buffer we're going to create since these a client-side graphics. 
-So this will create both a "fill" for the buffer and a point symbol as well.
+Next, we're defining a bunch of functions that are going to execute the query task, get the features, 
+and then add them to the default graphics layer of the view.
 <br>
-<p style="padding-left: 5%; font-family: monospace;">var bufferSymbol = {<br>
-	&emsp;&emsp;type: "simple-fill", // autocasts as new SimpleFillSymbol()<br>
-	&emsp;&emsp;color: [140, 140, 222, 0.5],<br>
-	&emsp;&emsp;outline: {<br>
-	&emsp;&emsp;&emsp;&emsp;color: [0, 0, 0, 0.5],<br>
-	&emsp;&emsp;&emsp;&emsp;width: 2<br>
+<p style="padding-left: 5%; font-family: monospace;">//Perform query when page loads<br>
+	getFeatures("blue");<br>
+	<br>
+	//Get features with query where clause<br>
+	function getFeatures(theColor) {<br>
+	&emsp;&emsp;query.where = "LINE LIKE '%" + theColor + "%'";<br>
+	&emsp;&emsp;queryTask.execute(query).then(function(results) {<br>
+	&emsp;&emsp;&emsp;&emsp;addFeatures(results.features);<br>
+	&emsp;&emsp;})<br>
+	.catch(promiseRejected);<br>
+	}<br>
+	<br>
+	//Add features as graphics<br>
+	function addFeatures(features) {<br>
+	&emsp;&emsp;var color,<br>
+	&emsp;&emsp;&emsp;&emsp;symbol;<br>
+	&emsp;&emsp;//Color<br>
+	&emsp;&emsp;switch (document.getElementById("queryDiv").value) {<br>
+	&emsp;&emsp;&emsp;&emsp;case "blue":<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color = [0, 0, 255]<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;break;<br>
+	&emsp;&emsp;&emsp;&emsp;case "red":<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color = [255, 0, 0]<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;break;<br>
+	&emsp;&emsp;&emsp;&emsp;case "green":<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color = [0, 255, 0]<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;break;<br>
+	&emsp;&emsp;&emsp;&emsp;case "orange":<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color = [255,165, 0]<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;break;	<br>
+	&emsp;&emsp;&emsp;&emsp;case "yellow":<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color = [255, 255, 0]<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;break;<br>
+	&emsp;&emsp;&emsp;&emsp;case "silver":<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color = [190, 190, 190]<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;break;<br>
 	&emsp;&emsp;}<br>
-  };<br>
-  <br>
-  var pointSymbol = {<br>
-	&emsp;&emsp;type: "simple-marker", // autocasts as new SimpleMarkerSymbol()<br>
-	&emsp;&emsp;color: [255, 0, 0],<br>
-	&emsp;&emsp;outline: {<br>
-	&emsp;&emsp;&emsp;&emsp;color: [255, 255, 255],<br>
-	&emsp;&emsp;&emsp;&emsp;width: 1<br>
-	&emsp;&emsp;},<br>
-	&emsp;&emsp;size: 7<br>
-  };
+	&emsp;&emsp;symbol = new SimpleMarkerSymbol({<br>
+	&emsp;&emsp;&emsp;&emsp;color: color,<br>
+	&emsp;&emsp;&emsp;&emsp;size: 8,<br>
+	&emsp;&emsp;&emsp;&emsp;outline: {<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color: [ 255, 255, 255 ],<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;width: 1<br>
+	&emsp;&emsp;&emsp;&emsp;}<br>
+	&emsp;&emsp;});<br>
+	&emsp;&emsp;//Set symbol and popup template<br>
+	&emsp;&emsp;for (var i=0; i < features.length; i++) {<br>
+	&emsp;&emsp;&emsp;&emsp;var feature = features[i];<br>
+	&emsp;&emsp;&emsp;&emsp;feature.symbol = symbol;<br>
+	&emsp;&emsp;&emsp;&emsp;feature.popupTemplate = {<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;title: "{NAME}",<br>
+	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;content: "This is a metro stop for the {LINE} line(s)."<br>
+	&emsp;&emsp;&emsp;&emsp;}<br>
+	&emsp;&emsp;&emsp;&emsp;view.graphics.add(feature);<br>
+	&emsp;&emsp;}<br>
+	&emsp;&emsp;//Add graphics<br>
+	&emsp;&emsp;view.graphics.removeAll();<br>
+	&emsp;&emsp;view.graphics.addMany(features);<br>
+	&emsp;&emsp;view.goTo(features);<br>
+	&emsp;&emsp;view.popup.visible = false;<br>
+	}
 </p>
 <br>
-<u>4. Capture Click</u>
+<u>4. Add Handlers</u>
 <br>
-Finally, we need to tell our view that when we click on it, we want to create this buffer. 
-To do this, we'll capture the event of the clicking on the view and call a function to generate the buffer.
+Final step I promise! We just have to add some handlers to select the HTML slement so we can change the SQL string for the query.
+Also, just an error handler in case the service isn't working!
 <br>
-<p style="padding-left: 5%; font-family: monospace;">view.on("click", function(event) {<br>
-	&emsp;&emsp;bufferPoint(event.mapPoint);<br>
-  });<br>
-  <br>
-  function bufferPoint(point) {<br>
-	&emsp;&emsp;bufferLayer.add(new Graphic({<br>
-	&emsp;&emsp;&emsp;&emsp;geometry: point,<br>
-	&emsp;&emsp;&emsp;&emsp;symbol: pointSymbol<br>
-	&emsp;&emsp;}));<br>
+<p style="padding-left: 5%; font-family: monospace;">//Add select element to UI<br>
+	view.when(function() {<br>
+		&emsp;&emsp;view.ui.add(document.getElementById("queryDiv"), "top-right");<br>
+		&emsp;&emsp;document.getElementById("queryDiv").addEventListener("change", doQuery);<br>
+	});<br>
 	<br>
-	&emsp;&emsp;var buffer = geometryEngine.geodesicBuffer(point, 1, "miles");<br>
-	&emsp;&emsp;bufferLayer.add(new Graphic({<br>
-	&emsp;&emsp;&emsp;&emsp;geometry: buffer,<br>
-	&emsp;&emsp;&emsp;&emsp;symbol: bufferSymbol<br>
-	&emsp;&emsp;}));<br>
-  }
+    //Get the color from the drop down<br>
+	function doQuery(e) {<br>
+		&emsp;&emsp;var theColor = e.target.value;<br>
+		&emsp;&emsp;getFeatures(theColor);<br>
+	};<br>
+	<br>
+	//Add the promise rejected function<br>
+	function promiseRejected(){<br>
+		&emsp;&emsp;console.write("Error with query");<br>
+	}<br>
 </p>
-Now click around a bunch! You'll likely notice a slight delay, and that's because your computer is doing a bunch of fancy calculations to make this buffer on the fly!
-<br><br><button type="button" class="collapsible">Map Solution</button>
-    <div class="content"><img src="./images/e13_one.jpg"></div>
+And now, after all of this, your application should look like this:<br><br>
+<button type="button" class="collapsible">Map Solution</button>
+    <div class="content"><img src="./images/e12_3D_one.png"></div>
 <br><br><button type="button" class="collapsible">Code Solution</button>
-    <div class="content"><img src="./images/e13_code_1.jpg"><img src="./images/e13_code_2.jpg"></div>
+    <div class="content"><img src="./images/e12_3D_code_1.jpg"><img src="./images/e12_3D_code_2.jpg"><img src="./images/e12_3D_code_3.jpg"></div>
+
 <br><br><br><b><u>Challenges:</u></b><br><br>
-Can you make the buffer large enough to encapsulate all of DC?
+Oops! I left out the green line! Can you modify the HTML to include the green line and ensure that it still works with our query task?
 </div>
 </div>
 <!-- <div id="dialog" title="Welcome to the ArcGIS API for JavaScript">
@@ -350,7 +428,7 @@ Can you make the buffer large enough to encapsulate all of DC?
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 
-		link.setAttribute('download', 'exercise13.html');
+		link.setAttribute('download', 'exercise9-3D.html');
 		link.setAttribute('href', 'data:' + 'text/html' + ';charset=utf-8,' + encodeURIComponent(elHtml));
 		link.click(); 
 	  }

@@ -1,6 +1,6 @@
 <!doctype html>
 
-<title>Exercise 13 3D</title>
+<title>Exercise 3 3D</title>
 <meta charset="utf-8"/>
 <link rel="icon" type="image/png" href="./brackets.png"/>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.css>
@@ -164,13 +164,13 @@
 
 
 <textarea id="code" name="code" style="display:none;">
-<!-- Exercise 13 3D, Written in JavaScript 4.18 -->
+<!-- Exercise 3 3D, Written in JavaScript 4.18 -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>Exercise 13 3D</title>
+  <title>Exercise 3 3D</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/css/main.css">
   <script src="https://js.arcgis.com/4.18/"></script>
@@ -186,19 +186,20 @@
 
   <script>
     require([
-      "esri/views/SceneView",
-      "esri/Map"
-    ], function(SceneView, Map) {
+        "esri/Map",
+        "esri/views/SceneView",
+    ], function(Map, SceneView) {
 
-      var scene = new Map({
-        basemap: "dark-gray-vector"
+      var map = new Map({
+        basemap: "dark-gray-vector",
+        ground: "world-elevation"
       });
-
-      var view = new SceneView({
-        map: scene,
+        
+	  var view = new SceneView({
         container: "viewDiv",
-		center: [-77.029, 38.89],
-		zoom: 10
+        map: map,
+        center: [-77.029, 38.89],
+        scale: 500000
       });
 
     });
@@ -221,84 +222,58 @@
 <iframe id=preview></iframe>
 </div>
 <div id=instruct style="font-family: Arial, Helvetica, sans-serif;">
-<span style="display: block; text-align: center;"><b><u>Exercise 13 3D - Client-side Buffering</u></b><br><br></span>
+<span style="display: block; text-align: center;"><b><u>Exercise 3 3D - Add a Scene Layer</u></b><br><br></span>
 <b><u>Instructions:</u></b><br><br>
-You may have heard the term "client-side" before, but what does that actually mean?
+Just displaying a plain scene is fine, but we need to be able to add our own layers to our scene.
 <br><br>
-The "client" in this case is your web browser! So instead of going back to our feature service, or any servers,
- we are going to generate a buffer locally on your computer using your web browser.
-<br><br>
-To do this, we're going to use the GeometryEngine class and buffer by a predefined amount.
+In this exercise we will cover the basics of adding a scene layer to any 3D application. To learn more about the options in SceneLayers check out the <a target="_blank" href="https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-SceneLayer.html">API Reference</a>.
 <br><br>
 <b><u>Exercise:</u></b><br><br>
-<u>1. Update Require</u>
+<u>1. Update Require Statement</u>
 <br>
-Update your require statement <b>and</b> function definition to include the following:
-<br>
+First step is to update the require statement and the function definition.
 <p style="padding-left: 5%; font-family: monospace;">require([<br>
+    &emsp;&emsp;"esri/Map",<br>
 	&emsp;&emsp;"esri/views/SceneView",<br>
-	&emsp;&emsp;"esri/Map",<br>
-	&emsp;&emsp;/*** ADD ***/<br>
-	&emsp;&emsp;"esri/layers/GraphicsLayer",<br>
-	&emsp;&emsp;"esri/Graphic",<br>
-	&emsp;&emsp;"esri/geometry/geometryEngine"<br>
-], function(SceneView, Map, GraphicsLayer, Graphic, geometryEngine) {
+	&emsp;&emsp;"esri/layers/SceneLayer"<br>
+], function(Map, SceneView, SceneLayer) {
 </p>
+This is a pattern that we are going to repeating a lot throughout these exercises. Now we have the components for our Scene Layer.
+<br><br>
+<u>2. Add Scene Layer</u>
 <br>
-<u>2. Add Graphics Layer</u>
+Now let's add the a scene layer to our map, buildings always look nice in 3D!
 <br>
-Before we can work with the graphics layer, we need to add it to our map!
-<br>
-<p style="padding-left: 5%; font-family: monospace;">var bufferLayer = new GraphicsLayer();<br>
-	<br>
-	scene.add(bufferLayer);
+<p style="padding-left: 5%; font-family: monospace;">var buildingsSL = new SceneLayer({<br>
+	&emsp;&emsp;url: "https://tiles.arcgis.com/tiles/hRUr1F8lE8Jq2uJo/arcgis/rest/services/BuildingsDC/SceneServer/layers/0"<br>
+});<br>
+map.add(buildingsSL);
 </p>
+Nice! You should be able to zoom in and check out the buildings now. Should look like this:
+<br><br>
+<button type="button" class="collapsible">Map Solution</button>
+    <div class="content"><img src="./images/e8_one.png"></div>
+<br><br>
+<u>3. Adjust Camera</u>
 <br>
-<u>3. Symbols</u>
-<br>
-We need a symbol for the buffer we're going to create since these a client-side graphics. 
-So for 3D we're going to make a 3D point symbol that has height and width predefined in it.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">var bufferSymbol = {<br>
-	&emsp;&emsp;type: "point-3d", // autocasts as new SimpleFillSymbol()<br>
-	&emsp;&emsp;symbolLayers: [{<br>
-	&emsp;&emsp;&emsp;&emsp;type: "object",<br>
-	&emsp;&emsp;&emsp;&emsp;width: 10000,<br>
-	&emsp;&emsp;&emsp;&emsp;height: 10000,<br>
-	&emsp;&emsp;&emsp;&emsp;resource: {<br>
-	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;primitive: "sphere"<br>
-	&emsp;&emsp;&emsp;&emsp;},<br>
-	&emsp;&emsp;&emsp;&emsp;material: {<br>
-	&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;color:[50, 50, 200, 0.75]<br>
-	&emsp;&emsp;&emsp;&emsp;}<br>
-	&emsp;&emsp;}]<br>
-	};
+In these scenes, it might be beneficial to adjust your camera in the code to have a better starting point. Let's adjust the camera settings in our SceneView.
+<p style="padding-left: 5%; font-family: monospace;">var view = new SceneView({<br>
+	&emsp;&emsp;container: "viewDiv",<br>
+	&emsp;&emsp;map: map,<br>
+	&emsp;&emsp;camera:{<br>
+		&emsp;&emsp;&emsp;&emsp;position: [-77.029, 38.89, 300],<br>
+		&emsp;&emsp;&emsp;&emsp;tilt: 40,<br>
+		&emsp;&emsp;&emsp;&emsp;heading: 60<br>
+	&emsp;&emsp;}<br>
+});
 </p>
-<br>
-<u>4. Capture Click</u>
-<br>
-Finally, we need to tell our view that when we click on it, we want to create this buffer. 
-To do this, we'll capture the event of the clicking on the view and call a function to generate the buffer.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">view.on("click", function(event) {<br>
-	&emsp;&emsp;bufferPoint(event.mapPoint);<br>
-  });<br>
-  <br>
-  function bufferPoint(point) {<br>
-	&emsp;&emsp;var buffer = geometryEngine.geodesicBuffer(point, 1, "miles");<br>
-	&emsp;&emsp;bufferLayer.add(new Graphic({<br>
-	&emsp;&emsp;&emsp;&emsp;geometry: buffer,<br>
-	&emsp;&emsp;&emsp;&emsp;symbol: bufferSymbol<br>
-	&emsp;&emsp;}));<br>
-  }
-</p>
-Now click around a bunch! You'll likely notice a slight delay, and that's because your computer is doing a bunch of fancy calculations to make this buffer on the fly!
-<br><br><button type="button" class="collapsible">Map Solution</button>
-    <div class="content"><img src="./images/e13_one.jpg"></div>
-<br><br><button type="button" class="collapsible">Code Solution</button>
-    <div class="content"><img src="./images/e13_code_1.jpg"><img src="./images/e13_code_2.jpg"></div>
+Now your camera should be perfectly positioned over the Smithsonian Museum of Natural History!
+<br><br>
+<button type="button" class="collapsible">Code Solution</button>
+    <div class="content"><img src="./images/e8_code.jpg"></div>
 <br><br><br><b><u>Challenges:</u></b><br><br>
-Can you make the buffer large enough to encapsulate all of DC? Also see if you can change the 3D symbol primitive type to a "diamond"!
+Add your own SceneLayer! Use whatever portal you are comfortable with, and find a scene layer published up on there. Keep in mind it must be shared publically, otherwise it'll ask you to log into the portal.
+<br><br>
 </div>
 </div>
 <!-- <div id="dialog" title="Welcome to the ArcGIS API for JavaScript">
@@ -341,7 +316,7 @@ Can you make the buffer large enough to encapsulate all of DC? Also see if you c
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 
-		link.setAttribute('download', 'exercise13-3D.html');
+		link.setAttribute('download', 'exercise3_3D.html');
 		link.setAttribute('href', 'data:' + 'text/html' + ';charset=utf-8,' + encodeURIComponent(elHtml));
 		link.click(); 
 	  }

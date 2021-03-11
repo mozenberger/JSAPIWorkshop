@@ -1,6 +1,6 @@
 <!doctype html>
 
-<title>Exercise 14 3D</title>
+<title>Exercise 2 3D</title>
 <meta charset="utf-8"/>
 <link rel="icon" type="image/png" href="./brackets.png"/>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.51.0/codemirror.css>
@@ -164,13 +164,13 @@
 
 
 <textarea id="code" name="code" style="display:none;">
-<!-- Exercise 14 3D, Written in JavaScript 4.18 -->
+<!-- Exercise 2 3D, Written in JavaScript 4.18 -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>Exercise 14 3D</title>
+  <title>Exercise 2 3D</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/css/main.css">
   <script src="https://js.arcgis.com/4.18/"></script>
@@ -186,20 +186,17 @@
 
   <script>
     require([
-      "esri/views/SceneView",
-      "esri/Map"
-    ], function(SceneView, Map) {
+      "esri/Map",
+	  "esri/views/SceneView"
+    ], function(Map, SceneView) {
 
-      var scene = new Map({
-        basemap: "hybrid",
-		ground: "world-elevation"
-      });
+      var map = new Map({
+		  basemap: "topo-vector"
+	  })
 
       var view = new SceneView({
-        map: scene,
-        container: "viewDiv",
-		center: [7.59564, 46.06595],
-  	  	zoom: 12
+        map: map,
+        container: "viewDiv"
       });
 
     });
@@ -222,146 +219,40 @@
 <iframe id=preview></iframe>
 </div>
 <div id=instruct style="font-family: Arial, Helvetica, sans-serif;">
-<span style="display: block; text-align: center;"><b><u>Exercise 14 3D - Calling a Geoprocessing Service</u></b><br><br></span>
+<span style="display: block; text-align: center;"><b><u>Exercise 2 3D - Build a Starter 3D Map</u></b><br><br></span>
 <b><u>Instructions:</u></b><br><br>
-As cool as JavaScript is, it certainly has limits. There are lots of complex tasks that we may need that are likely already in a geoprocessing tool. 
-So let's use the JS API to call a geoprocessing service and offload all that crazy work to a server!
+Custom 3D apps with just a few lines of code?! Get outta here. In this exercise we're going to get started with making 3D scenes with JavaScript!
 <br><br>
-In this lab, we'll calculate a complex viewshed by reaching out to that geoprocessing service.
+We're going to create a plain scene, and then add elevation to really make it pop. Note: using a mouse is highly recommended!
 <br><br>
 <b><u>Exercise:</u></b><br><br>
-<u>1. Update Require</u>
+<u>1. Update the View</u>
 <br>
-Update your require statement <b>and</b> function definition to include the following:
-<br>
-<p style="padding-left: 5%; font-family: monospace;">require([<br>
-    &emsp;&emsp;"esri/views/SceneView",<br>
-	&emsp;&emsp;"esri/Map",<br>
-    &emsp;&emsp;"esri/layers/GraphicsLayer",<br>
-    &emsp;&emsp;"esri/Graphic",<br>
-    &emsp;&emsp;"esri/geometry/Point",<br>
-    &emsp;&emsp;"esri/tasks/Geoprocessor",<br>
-    &emsp;&emsp;"esri/tasks/support/LinearUnit",<br>
-    &emsp;&emsp;"esri/tasks/support/FeatureSet",<br>
-  ], function(SceneView, Map, GraphicsLayer, Graphic, Point, Geoprocessor, LinearUnit, FeatureSet) { 
+Let's first update the view in our scene. The global scale is great, but let's get a little closer to the ground. Replace your current "view" variable with this one.
+<p style="padding-left: 5%; font-family: monospace;">var view = new SceneView({<br>
+    &emsp;&emsp;map: map,<br>
+	&emsp;&emsp;container: "viewDiv",<br>
+	&emsp;&emsp;center: [-79.029, 38.89],<br>
+	&emsp;&emsp;scale: 50000<br>
+});
 </p>
+Now if you refresh your map, you'll notice we're more focused over a mountain range. But if you right-click and drag to change your camera angle, the mountains have no elevation!
+<br><br>
+<u>2. Add Elevation</u>
 <br>
-<u>2. Add Graphics Layer</u>
+A flat scene is a boring scene. So let's go ahead and add our Esri World Elevation service to the scene. Put this line of code in your "map" variable, and make sure to put a comma after the "basemap" line to separate the statements!
 <br>
-We will create a graphic point on the location that we click on, so let's add a graphics layer to the map.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">var graphicsLayer = new GraphicsLayer();<br>
-	<br>
-	scene.add(graphicsLayer);
-</p>
-<br>
-<u>3. Symbols</u>
-<br>
-This is probably feeling pretty similar to the last exercise at this point!
-<br>
-These symbols are going to be used for the initial click point, but also the returned polygon fill.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">var markerSymbol = {<br>
-	&emsp;&emsp;type: "simple-marker", // autocasts as new SimpleMarkerSymbol()<br>
-	&emsp;&emsp;color: [255, 0, 0],<br>
-	&emsp;&emsp;outline: { // autocasts as new SimpleLineSymbol()<br>
-		&emsp;&emsp;&emsp;&emsp;color: [255, 255, 255],<br>
-		&emsp;&emsp;&emsp;&emsp;width: 2<br>
-		&emsp;&emsp;}<br>
-  };<br>
-  <br>
-  var fillSymbol = {<br>
-	&emsp;&emsp;type: "simple-fill", // autocasts as new SimpleFillSymbol()<br>
-	&emsp;&emsp;color: [0, 255, 0, 0.75],<br>
-	&emsp;&emsp;outline: { // autocasts as new SimpleLineSymbol()<br>
-		&emsp;&emsp;&emsp;&emsp;color: [255, 255, 255],<br>
-		&emsp;&emsp;&emsp;&emsp;width: 1<br>
-		&emsp;&emsp;}<br>
-  };
-</p>
-<br>
-<u>4. Define Geoprocessor</u>
-<br>
-Now we can define the geoprocessor and set the url and out spatial reference.
-And then listen for the view on click trigger to call the function in the next step.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">var gp = new    Geoprocessor("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed");<br>
-	&emsp;&emsp;gp.outSpatialReference = { // autocasts as new SpatialReference()<br>
-		&emsp;&emsp;&emsp;&emsp;wkid: 102100<br>
-		&emsp;&emsp;};<br>
-		<br>
-	view.on("click", computeViewshed);
-</p>
-<br>
-<u>5. Computation</u>
-<br>
-This function allows us to computer everything that the geoprocessing tool needs.
-We get the click point's lat/long, create graphics, set up parameters, and then pass all of this to the geoprocessing tool to execute.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">function computeViewshed(event) {<br>
-	&emsp;&emsp;graphicsLayer.removeAll();<br>
-	<br>
-	&emsp;&emsp;var point = new Point({<br>
-		&emsp;&emsp;&emsp;&emsp;longitude: event.mapPoint.longitude,<br>
-		&emsp;&emsp;&emsp;&emsp;latitude: event.mapPoint.latitude<br>
-		&emsp;&emsp;});<br>
-	<br>
-	&emsp;&emsp;var inputGraphic = new Graphic({<br>
-		&emsp;&emsp;&emsp;&emsp;geometry: point,<br>
-		&emsp;&emsp;&emsp;&emsp;symbol: markerSymbol<br>
-		&emsp;&emsp;});<br>
-	<br>
-	&emsp;&emsp;graphicsLayer.add(inputGraphic);<br>
-	<br>
-	&emsp;&emsp;var inputGraphicContainer = [];<br>
-	&emsp;&emsp;inputGraphicContainer.push(inputGraphic);<br>
-	&emsp;&emsp;var featureSet = new FeatureSet();<br>
-	&emsp;&emsp;featureSet.features = inputGraphicContainer;<br>
-	<br>
-	&emsp;&emsp;var vsDistance = new LinearUnit();<br>
-	&emsp;&emsp;vsDistance.distance = 5;<br>
-	&emsp;&emsp;vsDistance.units = "miles";<br>
-	<br>
-	&emsp;&emsp;var params = {<br>
-		&emsp;&emsp;&emsp;&emsp;"Input_Observation_Point": featureSet,<br>
-		&emsp;&emsp;&emsp;&emsp;"Viewshed_Distance": vsDistance<br>
-		&emsp;&emsp;};<br>
-	<br>
-	&emsp;&emsp;gp.execute(params).then(drawResultData);<br>
-  }
-
-</p>
-<br>
-<u>5. Handle Results</u>
-<br>
-Finally, we need to actually do something with the data the GP Tool sends back to us.
-We get the results and need to define their symbol and then add them to the map. And lastly, we obviously don't want them out the map, so we'll zoom to their extent.
-<br>
-<p style="padding-left: 5%; font-family: monospace;">function drawResultData(result) {<br>
-	&emsp;&emsp;var resultFeatures = result.results[0].value.features;<br>
-	<br>
-	&emsp;&emsp;// Assign each resulting graphic a symbol<br>
-	&emsp;&emsp;var viewshedGraphics = resultFeatures.map(function(feature) {<br>
-		&emsp;&emsp;&emsp;&emsp;feature.symbol = fillSymbol;<br>
-		&emsp;&emsp;&emsp;&emsp;return feature;<br>
-		&emsp;&emsp;});<br>
-	<br>
-	&emsp;&emsp;// Add the resulting graphics to the graphics layer<br>
-	&emsp;&emsp;graphicsLayer.addMany(viewshedGraphics);<br>
-	<br>
-	&emsp;&emsp;view.goTo({<br>
-		&emsp;&emsp;&emsp;&emsp;target: viewshedGraphics<br>
-		&emsp;&emsp;});<br>
-  }
-</p>
-Now go ahead and click on the map! Give it a few seconds and it'll create a viewshed for you!
-<br><br><button type="button" class="collapsible">Map Solution</button>
-    <div class="content"><img src="./images/e14_one.jpg"></div>
+<p style="padding-left: 5%; font-family: monospace;">ground: "world-elevation"</p>
+And now if we tilt our camera a little bit, you should notice the mountains have real elevation and look like this:
+<br><br>
+<button type="button" class="collapsible">Map Solution</button>
+    <div class="content"><img src="./images/e7_one.png"></div>
 <br><br><button type="button" class="collapsible">Code Solution</button>
-    <div class="content"><img src="./images/e14_3D_code_1.jpg"><img src="./images/e14_3D_code_2.jpg"><img src="./images/e14_3D_code_3.jpg"></div>
+    <div class="content"><img src="./images/e7_code.jpg"></div>
 <br><br><br><b><u>Challenges:</u></b><br><br>
-Really zoom into the point that you clicked to start your viewshed. In 3D, you should be able to really understand why it calculated the way it did!<br>
-Can you think of any other geoprocessing tools that you could use in a JS API?
+Try switching out the basemap in our map variable to something else, like "satellite" or "national-geographic".
+<br><br>
+Navigating in 3D is different than in 2D, as you've probably seen. Make sure that you're comfortable with the different buttons on the top left, and know how to re-orient the map to face north!
 </div>
 </div>
 <!-- <div id="dialog" title="Welcome to the ArcGIS API for JavaScript">
@@ -404,7 +295,7 @@ Can you think of any other geoprocessing tools that you could use in a JS API?
 		var link = document.createElement('a');
 		mimeType = 'text/html' || 'text/plain';
 
-		link.setAttribute('download', 'exercise14-3D.html');
+		link.setAttribute('download', 'exercise2_3D.html');
 		link.setAttribute('href', 'data:' + 'text/html' + ';charset=utf-8,' + encodeURIComponent(elHtml));
 		link.click(); 
 	  }
